@@ -1,73 +1,66 @@
-# React + TypeScript + Vite
+# 工事工程表バーチャートアプリ
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+工事工程表をExcel形式のバーチャートで作成・管理し、PDF/PNG/Excel形式でエクスポートできるWebアプリケーション
 
-Currently, two official plugins are available:
+## 機能
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 時間・日・週・月スケールでの工程表作成
+- 5分刻みの時間単位管理
+- タスクのドラッグ&ドロップによる順序変更
+- タスクごとの色設定
+- PDF/PNG/Excel形式でのエクスポート
+- モバイル対応（iPhone/Android）
 
-## React Compiler
+詳細は[仕様書.md](./仕様書.md)を参照してください。
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## セットアップ
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 開発
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+開発サーバーは `http://localhost:5173/` で起動します。
+ネットワークアクセスを有効にするには、`vite.config.ts` で `server.host: true` が設定されています。
+
+## ビルド
+
+```bash
+npm run build
+```
+
+## Firebase Hosting デプロイ
+
+### 1. Firebase CLIでログイン
+
+```bash
+firebase login
+```
+
+### 2. Firebaseプロジェクトを作成
+
+Firebase Console (https://console.firebase.google.com/) で新しいプロジェクトを作成するか、CLIで作成：
+
+```bash
+firebase projects:create your-project-id
+```
+
+### 3. プロジェクトIDを設定
+
+`.firebaserc` ファイルの `your-firebase-project-id` を実際のプロジェクトIDに置き換えます。
+
+### 4. ビルドとデプロイ
+
+```bash
+npm run build
+firebase deploy --only hosting
+```
+
+## ライセンス
+
+MIT
