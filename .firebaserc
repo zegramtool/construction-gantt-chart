@@ -1,5 +1,5 @@
 {
   "projects": {
-    "default": "your-firebase-project-id"
+    "default": "construction-gantt-chart-cli"
   }
 }
