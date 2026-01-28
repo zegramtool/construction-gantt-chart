@@ -22,7 +22,7 @@ export async function exportToExcel(
 
   const paper = paperSizes[settings.paperSize];
   worksheet.pageSetup = {
-    paperSize: settings.paperSize === 'A4' ? 9 : settings.paperSize === 'A3' ? 8 : 10,
+    paperSize: (settings.paperSize === 'A4' ? 9 : settings.paperSize === 'A3' ? 8 : 10) as any,
     orientation: settings.orientation === 'landscape' ? 'landscape' : 'portrait',
     fitToPage: true,
     fitToWidth: 1,

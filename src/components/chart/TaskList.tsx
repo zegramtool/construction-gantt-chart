@@ -2,13 +2,10 @@ import { useState, useMemo } from 'react';
 import { useStore } from '@/stores/useStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Trash2, GripVertical, Calendar } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
-import { ja } from 'date-fns/locale';
 import type { Task, ScaleBasedSchedule } from '@/types';
-import { DEFAULT_SCALE_SCHEDULE, DEFAULT_HOUR_SCALE_SETTINGS, DEFAULT_DAY_SCALE_SETTINGS, minutesToTimeString, timeStringToMinutes } from '@/types';
+import { DEFAULT_SCALE_SCHEDULE, DEFAULT_HOUR_SCALE_SETTINGS, DEFAULT_DAY_SCALE_SETTINGS, minutesToTimeString } from '@/types';
 
 interface TaskListProps {
   projectId: string;

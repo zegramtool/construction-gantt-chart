@@ -3,13 +3,13 @@ import { useStore } from '@/stores/useStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, GripVertical, Trash2, Edit2 } from 'lucide-react';
-import { format, parseISO, eachDayOfInterval, eachHourOfInterval, eachWeekOfInterval, eachMonthOfInterval, isWithinInterval, isSameDay, isSaturday, isSunday, startOfDay, endOfDay, differenceInDays, differenceInHours, differenceInWeeks, differenceInMonths, addDays, addHours, addWeeks, addMonths, setHours } from 'date-fns';
+import { Plus, GripVertical } from 'lucide-react';
+import { format, parseISO, eachDayOfInterval, isSaturday, isSunday, addDays } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { isHoliday, isNonWorkday, getWeekNumber, formatMonthHeader } from '@/lib/holidays';
+import { isHoliday, isNonWorkday } from '@/lib/holidays';
 import { cn } from '@/lib/utils';
 import { TaskBar } from './TaskBar';
-import type { Project, Task, Trade, ViewScale, ScaleBasedSchedule } from '@/types';
+import type { Project, Task, Trade, ScaleBasedSchedule } from '@/types';
 import { DEFAULT_SCALE_SCHEDULE, DEFAULT_HOUR_SCALE_SETTINGS, DEFAULT_DAY_SCALE_SETTINGS, minutesToTimeString } from '@/types';
 
 interface ChartCalendarProps {
@@ -113,15 +113,6 @@ export function ChartCalendar({ project, tasks, trades }: ChartCalendarProps) {
     }
   };
 
-  // 5分刻みの時間オプションを生成
-  const timeOptions = useMemo(() => {
-    const options: { value: number; label: string }[] = [];
-    for (let m = startMinutes; m <= endMinutes; m += 5) {
-      options.push({ value: m, label: minutesToTimeString(m) });
-    }
-    return options;
-  }, [startMinutes, endMinutes]);
-
   // 分を時間と分に分解
   const minutesToHoursAndMinutes = (minutes: number) => {
     const h = Math.floor(minutes / 60);
@@ -134,9 +125,6 @@ export function ChartCalendar({ project, tasks, trades }: ChartCalendarProps) {
     const roundedMinutes = Math.round(minutes / 5) * 5;
     return hours * 60 + roundedMinutes;
   };
-
-  // 分の選択肢（5分刻み）
-  const minuteOptions = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
 
   // 時間スロットを生成（5分刻み）
   const timeSlots = useMemo(() => {
@@ -472,15 +460,17 @@ export function ChartCalendar({ project, tasks, trades }: ChartCalendarProps) {
               >
                 <td className="sticky left-0 bg-white z-10 border-r border-b px-2 py-2">
                   <div className="flex items-center gap-2">
-                    <GripVertical 
-                      className="w-4 h-4 text-gray-400 cursor-grab active:cursor-grabbing" 
+                    <div
                       draggable
                       onDragStart={(e) => {
                         e.stopPropagation();
                         handleDragStart(e, task.id);
                       }}
                       onDragEnd={handleDragEnd}
-                    />
+                      className="cursor-grab active:cursor-grabbing"
+                    >
+                      <GripVertical className="w-4 h-4 text-gray-400" />
+                    </div>
                     <div className="relative" data-color-picker>
                       <div
                         className="w-3 h-3 rounded border cursor-pointer hover:ring-2 hover:ring-gray-300"
