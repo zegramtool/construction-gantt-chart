@@ -34,3 +34,26 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
 }
+
+/* スマホ・iPhone: チャートカレンダーを2列（工程|チャート）に強制 */
+@media (max-width: 767px) {
+  .chart-calendar-table thead th:nth-child(2),
+  .chart-calendar-table thead th:nth-child(3),
+  .chart-calendar-table thead th:nth-child(4) {
+    display: none !important;
+  }
+  .chart-calendar-table tbody td:nth-child(2),
+  .chart-calendar-table tbody td:nth-child(3),
+  .chart-calendar-table tbody td:nth-child(4) {
+    display: none !important;
+  }
+  .chart-calendar-table thead th:first-child,
+  .chart-calendar-table tbody td:first-child {
+    width: 160px !important;
+    min-width: 160px !important;
+    max-width: 50vw !important;
+  }
+  .chart-calendar-mobile-row {
+    display: grid !important;
+  }
+}

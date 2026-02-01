@@ -357,17 +357,17 @@ export function ChartCalendar({ project, tasks, trades }: ChartCalendarProps) {
 
   return (
     <div className="relative">
-      {/* テーブル */}
+      {/* テーブル（スマホ: 2列=工程|チャート、PC: 5列=工程名|担当|開始|終了|チャート） */}
       <div className="overflow-x-auto">
-        <table className="border-collapse min-w-full">
+        <table className="chart-calendar-table border-collapse min-w-full">
           <thead>
             {/* 月ヘッダー（日・週・月表示の場合、日程未定でない場合のみ） */}
             {monthGroups.length > 0 && !project.isProvisional && (
               <tr>
-                <th className="sticky left-0 bg-white z-10 border-r border-b w-[200px] min-w-[200px]"></th>
-                <th className="sticky left-[200px] bg-white z-10 border-r border-b w-[80px] min-w-[80px]"></th>
-                <th className="sticky left-[280px] bg-white z-10 border-r border-b w-[80px] min-w-[80px]"></th>
-                <th className="sticky left-[360px] bg-white z-10 border-r border-b w-[80px] min-w-[80px]"></th>
+                <th className="sticky left-0 bg-white z-10 border-r border-b w-[200px] min-w-[200px] md:w-[200px] md:min-w-[200px]"></th>
+                <th className="hidden md:table-cell sticky left-[200px] bg-white z-10 border-r border-b w-[80px] min-w-[80px]"></th>
+                <th className="hidden md:table-cell sticky left-[280px] bg-white z-10 border-r border-b w-[80px] min-w-[80px]"></th>
+                <th className="hidden md:table-cell sticky left-[360px] bg-white z-10 border-r border-b w-[80px] min-w-[80px]"></th>
                 {monthGroups.map((group, i) => (
                   <th
                     key={i}
@@ -382,16 +382,16 @@ export function ChartCalendar({ project, tasks, trades }: ChartCalendarProps) {
             
             {/* 日付ヘッダー */}
             <tr>
-              <th className="sticky left-0 bg-gray-100 z-10 border-r border-b px-2 py-2 text-left text-sm font-medium w-[200px] min-w-[200px]">
+              <th className="sticky left-0 bg-gray-100 z-10 border-r border-b px-2 py-2 text-left text-sm font-medium w-[160px] min-w-0 max-w-[50vw] md:w-[200px] md:min-w-[200px] md:max-w-none">
                 工程名
               </th>
-              <th className="sticky left-[200px] bg-gray-100 z-10 border-r border-b px-2 py-2 text-center text-sm font-medium w-[80px] min-w-[80px]">
+              <th className="hidden md:table-cell sticky left-[200px] bg-gray-100 z-10 border-r border-b px-2 py-2 text-center text-sm font-medium w-[80px] min-w-[80px]">
                 担当
               </th>
-              <th className="sticky left-[280px] bg-gray-100 z-10 border-r border-b px-2 py-2 text-center text-sm font-medium w-[80px] min-w-[80px]">
+              <th className="hidden md:table-cell sticky left-[280px] bg-gray-100 z-10 border-r border-b px-2 py-2 text-center text-sm font-medium w-[80px] min-w-[80px]">
                 {project.viewScale === 'hour' ? '開始時間' : (project.isProvisional ? '開始日' : '開始')}
               </th>
-              <th className="sticky left-[360px] bg-gray-100 z-10 border-r border-b px-2 py-2 text-center text-sm font-medium w-[80px] min-w-[80px]">
+              <th className="hidden md:table-cell sticky left-[360px] bg-gray-100 z-10 border-r border-b px-2 py-2 text-center text-sm font-medium w-[80px] min-w-[80px]">
                 {project.viewScale === 'hour' ? '終了時間' : (project.isProvisional ? '終了日' : '終了')}
               </th>
               {/* 時間スケールの場合 */}
@@ -458,7 +458,8 @@ export function ChartCalendar({ project, tasks, trades }: ChartCalendarProps) {
                   }
                 }}
               >
-                <td className="sticky left-0 bg-white z-10 border-r border-b px-2 py-2">
+                <td className="sticky left-0 bg-white z-10 border-r border-b px-2 py-2 w-[160px] min-w-0 max-w-[50vw] md:w-[200px] md:min-w-[200px] md:max-w-none">
+                  {/* 1段目: 工程名 + 色 + ドラッグ */}
                   <div className="flex items-center gap-2">
                     <div
                       draggable
@@ -467,29 +468,32 @@ export function ChartCalendar({ project, tasks, trades }: ChartCalendarProps) {
                         handleDragStart(e, task.id);
                       }}
                       onDragEnd={handleDragEnd}
-                      className="cursor-grab active:cursor-grabbing"
+                      className="cursor-grab active:cursor-grabbing shrink-0"
                     >
                       <GripVertical className="w-4 h-4 text-gray-400" />
                     </div>
-                    <div className="relative" data-color-picker>
-                      <div
-                        className="w-3 h-3 rounded border cursor-pointer hover:ring-2 hover:ring-gray-300"
+                    <div className="relative shrink-0" data-color-picker>
+                      <button
+                        type="button"
+                        className="w-5 h-5 md:w-3 md:h-3 rounded border cursor-pointer hover:ring-2 hover:ring-gray-300 touch-manipulation"
                         style={{ backgroundColor: getTaskColor(task) }}
                         title="色を変更"
                         onClick={(e) => {
                           e.stopPropagation();
                           setColorPickerTaskId(colorPickerTaskId === task.id ? null : task.id);
                         }}
+                        aria-label="色を変更"
                       />
                       {colorPickerTaskId === task.id && (
-                        <div className="absolute top-0 left-full ml-2 bg-white border rounded-lg shadow-lg p-2 z-50" data-color-picker>
+                        <div className="absolute top-full left-0 mt-2 md:top-0 md:left-full md:ml-2 md:mt-0 bg-white border rounded-lg shadow-lg p-2 z-50 min-w-[140px]" data-color-picker>
                           <div className="text-[10px] font-medium mb-2 text-gray-700">色を選択</div>
                           <div className="grid grid-cols-4 gap-1.5">
                             {colorPalette.map((color) => (
                               <button
                                 key={color}
+                                type="button"
                                 className={cn(
-                                  'w-7 h-7 rounded border hover:ring-2 hover:ring-gray-300 transition-all',
+                                  'w-7 h-7 rounded border hover:ring-2 hover:ring-gray-300 transition-all touch-manipulation',
                                   getTaskColor(task) === color && 'ring-2 ring-gray-500'
                                 )}
                                 style={{ backgroundColor: color }}
@@ -503,7 +507,8 @@ export function ChartCalendar({ project, tasks, trades }: ChartCalendarProps) {
                             ))}
                           </div>
                           <button
-                            className="mt-2 text-[10px] text-gray-500 hover:text-gray-700 w-full text-center py-1 border-t pt-1.5"
+                            type="button"
+                            className="mt-2 text-[10px] text-gray-500 hover:text-gray-700 w-full text-center py-1 border-t pt-1.5 touch-manipulation"
                             onClick={(e) => {
                               e.stopPropagation();
                               updateTask(task.id, { color: undefined });
@@ -516,7 +521,7 @@ export function ChartCalendar({ project, tasks, trades }: ChartCalendarProps) {
                       )}
                     </div>
                     {editingTaskId === task.id ? (
-                      <div className="flex-1 flex gap-1" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex-1 flex gap-1 min-w-0" onClick={(e) => e.stopPropagation()}>
                         <Input
                           value={task.name}
                           onChange={(e) => updateTask(task.id, { name: e.target.value })}
@@ -530,14 +535,14 @@ export function ChartCalendar({ project, tasks, trades }: ChartCalendarProps) {
                               setEditingTaskId(null);
                             }
                           }}
-                          className="h-7 text-sm flex-1"
+                          className="h-7 text-sm flex-1 min-w-0"
                           autoFocus
                         />
                         <Select
                           value={task.tradeId || ''}
                           onValueChange={(value) => updateTask(task.id, { tradeId: value || undefined })}
                         >
-                          <SelectTrigger className="h-7 w-24 text-xs">
+                          <SelectTrigger className="h-7 w-24 text-xs shrink-0">
                             <SelectValue placeholder="業種" />
                           </SelectTrigger>
                           <SelectContent>
@@ -558,14 +563,13 @@ export function ChartCalendar({ project, tasks, trades }: ChartCalendarProps) {
                       </div>
                     ) : (
                       <span
-                        className="text-sm cursor-pointer hover:text-primary flex-1 min-w-0"
+                        className="text-sm cursor-pointer hover:text-primary flex-1 min-w-0 truncate block"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                           setEditingTaskId(task.id);
                         }}
                         onMouseDown={(e) => {
-                          // ドラッグ開始を防ぐ
                           e.preventDefault();
                           e.stopPropagation();
                         }}
@@ -574,8 +578,138 @@ export function ChartCalendar({ project, tasks, trades }: ChartCalendarProps) {
                       </span>
                     )}
                   </div>
+                  {/* 2段目: 担当・開始・終了（スマホのみ・横スクロール不要） */}
+                  <div className="chart-calendar-mobile-row md:hidden mt-2 grid grid-cols-3 gap-1 items-center">
+                    <div className="min-w-0">
+                      <div className="text-[10px] text-gray-500 mb-0.5">担当</div>
+                      <Input
+                        value={task.assignee}
+                        onChange={(e) => updateTask(task.id, { assignee: e.target.value })}
+                        className="h-7 text-xs text-center min-w-0"
+                        placeholder="-"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-[10px] text-gray-500 mb-0.5">{project.viewScale === 'hour' ? '開始' : '開始'}</div>
+                      {project.viewScale === 'hour' ? (
+                        <div className="flex items-center justify-center gap-0.5">
+                          {(() => {
+                            const { hours, minutes } = minutesToHoursAndMinutes(getScaleValue(task, 'start'));
+                            return (
+                              <>
+                                <Input
+                                  type="number"
+                                  min={hourSettings.startHour}
+                                  max={hourSettings.endHour}
+                                  value={hours}
+                                  onChange={(e) => {
+                                    const h = parseInt(e.target.value) || hourSettings.startHour;
+                                    const clampedH = Math.max(hourSettings.startHour, Math.min(hourSettings.endHour, h));
+                                    const newMinutes = hoursAndMinutesToMinutes(clampedH, minutes);
+                                    updateScaleValue(task, 'start', Math.max(startMinutes, Math.min(endMinutes, newMinutes)));
+                                  }}
+                                  className="h-7 text-xs w-8 text-center p-0 min-w-0"
+                                />
+                                <span className="text-xs">:</span>
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  max="55"
+                                  step="5"
+                                  value={minutes}
+                                  onChange={(e) => {
+                                    const m = parseInt(e.target.value) || 0;
+                                    const roundedM = Math.round(m / 5) * 5;
+                                    const clampedM = Math.max(0, Math.min(55, roundedM));
+                                    const newMinutes = hoursAndMinutesToMinutes(hours, clampedM);
+                                    updateScaleValue(task, 'start', Math.max(startMinutes, Math.min(endMinutes, newMinutes)));
+                                  }}
+                                  className="h-7 text-xs w-8 text-center p-0 min-w-0"
+                                  placeholder="00"
+                                />
+                              </>
+                            );
+                          })()}
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center gap-0.5">
+                          <Input
+                            type="number"
+                            min={getMinValue()}
+                            max={getMaxValue()}
+                            value={getScaleValue(task, 'start')}
+                            onChange={(e) => {
+                              const value = parseInt(e.target.value) || getMinValue();
+                              updateScaleValue(task, 'start', Math.max(getMinValue(), Math.min(getMaxValue() || 999, value)));
+                            }}
+                            className="h-7 text-xs w-10 text-center min-w-0"
+                          />
+                          <span className="text-[10px] text-gray-500">{getUnitLabel()}</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-[10px] text-gray-500 mb-0.5">{project.viewScale === 'hour' ? '終了' : '終了'}</div>
+                      {project.viewScale === 'hour' ? (
+                        <div className="flex items-center justify-center gap-0.5">
+                          {(() => {
+                            const { hours, minutes } = minutesToHoursAndMinutes(getScaleValue(task, 'end'));
+                            return (
+                              <>
+                                <Input
+                                  type="number"
+                                  min={hourSettings.startHour}
+                                  max={hourSettings.endHour}
+                                  value={hours}
+                                  onChange={(e) => {
+                                    const h = parseInt(e.target.value) || hourSettings.startHour;
+                                    const clampedH = Math.max(hourSettings.startHour, Math.min(hourSettings.endHour, h));
+                                    const newMinutes = hoursAndMinutesToMinutes(clampedH, minutes);
+                                    updateScaleValue(task, 'end', Math.max(startMinutes, Math.min(endMinutes, newMinutes)));
+                                  }}
+                                  className="h-7 text-xs w-8 text-center p-0 min-w-0"
+                                />
+                                <span className="text-xs">:</span>
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  max="55"
+                                  step="5"
+                                  value={minutes}
+                                  onChange={(e) => {
+                                    const m = parseInt(e.target.value) || 0;
+                                    const roundedM = Math.round(m / 5) * 5;
+                                    const clampedM = Math.max(0, Math.min(55, roundedM));
+                                    const newMinutes = hoursAndMinutesToMinutes(hours, clampedM);
+                                    updateScaleValue(task, 'end', Math.max(startMinutes, Math.min(endMinutes, newMinutes)));
+                                  }}
+                                  className="h-7 text-xs w-8 text-center p-0 min-w-0"
+                                  placeholder="00"
+                                />
+                              </>
+                            );
+                          })()}
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center gap-0.5">
+                          <Input
+                            type="number"
+                            min={getMinValue()}
+                            max={getMaxValue()}
+                            value={getScaleValue(task, 'end')}
+                            onChange={(e) => {
+                              const value = parseInt(e.target.value) || getMinValue();
+                              updateScaleValue(task, 'end', Math.max(getMinValue(), Math.min(getMaxValue() || 999, value)));
+                            }}
+                            className="h-7 text-xs w-10 text-center min-w-0"
+                          />
+                          <span className="text-[10px] text-gray-500">{getUnitLabel()}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </td>
-                <td className="sticky left-[200px] bg-white z-10 border-r border-b px-2 py-2 text-center">
+                <td className="hidden md:table-cell sticky left-[200px] bg-white z-10 border-r border-b px-2 py-2 text-center">
                   <Input
                     value={task.assignee}
                     onChange={(e) => updateTask(task.id, { assignee: e.target.value })}
@@ -583,7 +717,7 @@ export function ChartCalendar({ project, tasks, trades }: ChartCalendarProps) {
                     placeholder="-"
                   />
                 </td>
-                <td className="sticky left-[280px] bg-white z-10 border-r border-b px-1 py-2 text-center">
+                <td className="hidden md:table-cell sticky left-[280px] bg-white z-10 border-r border-b px-1 py-2 text-center">
                   {project.viewScale === 'hour' ? (
                     <div className="flex items-center justify-center gap-0.5">
                       {(() => {
@@ -641,7 +775,7 @@ export function ChartCalendar({ project, tasks, trades }: ChartCalendarProps) {
                     </div>
                   )}
                 </td>
-                <td className="sticky left-[360px] bg-white z-10 border-r border-b px-1 py-2 text-center">
+                <td className="hidden md:table-cell sticky left-[360px] bg-white z-10 border-r border-b px-1 py-2 text-center">
                   {project.viewScale === 'hour' ? (
                     <div className="flex items-center justify-center gap-0.5">
                       {(() => {
